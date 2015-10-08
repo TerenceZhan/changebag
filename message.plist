@@ -18,7 +18,7 @@
                         <key>kind</key>
                         <string>software-package</string>
                         <key>url</key>
-                        <string>https://github.com/TerenceZhan/changebag/blob/master/message.ipa</string>
+                        <string>https://raw.githubusercontent.com/TerenceZhan/changebag/master/message.ipa</string>
                     </dict>
                     <dict>
                         <key>kind</key>
