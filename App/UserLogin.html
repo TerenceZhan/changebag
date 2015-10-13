@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 ,user-scalable=no">
+	<title>登 录</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link type="text/css" rel="stylesheet" href="css/css.css" />
+	<script type="text/javascript" src="../jscode/cordova.js"></script>
+	<script src="../jscode/Openxt.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../jscode/JQueryAjax.js"></script>
+	<script src="../jscode/JQueryKola.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript" src="js/js.js"></script>
+	<script type="text/javascript">
+	 function f_refreshvcode() {
+		$("td>.yzms>img").attr("src", "http://www.51qbd.cn/AppService/vcode.ashx?w=105&h=33&fz=18&r=" + Math.random());
+	}
+	
+	function f_login(){
+		var acct = $("#tb_acct").val();
+		var pwd = $("#tb_pwd").val();
+		var vcode = $("#tb_vcode").val();
+		
+		var p={};
+		p.acct=acct;
+		p.pwd=pwd;
+		p.vcode=vcode;
+
+		openxt_WYWY.fnLayerLoad();
+		JQueryAjax("/ashx/User/Login.ashx",p,function(result){
+			openxt_WYWY.fnLayerUnload();
+
+			if (result.error != null) {
+				alert(result.error);
+				f_refreshvcode();
+			}else{
+				window.location="InsideNavigate.html";
+			}
+		});
+	}
+			
+	$(function(){
+		openxt.page.readyData(f_refreshvcode);
+		openxt_WYWY.fnLayerUnload();
+	})
+	</script>
+</head>
+<body>
+	<div class="title_top fixed">
+		<a xtlt="首页" class="back">返回</a>登 录</div>
+	<div class="cleartop">
+	</div>
+	<div class="login_form">
+		<form action="">
+		<div class="mm_form">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						账 号
+					</td>
+					<td>
+						<input id="tb_acct" type="text" value="" class="zh" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						密 码
+					</td>
+					<td>
+						<input id="tb_pwd" type="password" value="" class="mm" />
+					</td>
+				</tr>
+				<tr>
+					<td style="border-bottom: 0px;">
+						验 证
+					</td>
+					<td style="border-bottom: 0px;">
+						<input id="tb_vcode" type="text" />
+						<div class="yzms">
+							<img alt="点击刷新验证码" onclick="f_refreshvcode()" />
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="forget">
+			<em><a href="UserFindPwd.html">忘记密码？</a></em><a href="UserRegister.html">注册账号</a>
+		</div>
+		<div class="login_but">
+			<a href="javascript:f_login();">登 陆</a></div>
+		</form>
+		<div class="text_tip">
+			<i>做任务注意事项：</i> <b>PC端</b>
+			<ul>
+				<li>1.进APP抢任务—抢任务的旺旺号必须和做任务的旺旺号一致---任务提交----按任务的要求去完成任务</li>
+				<li>2.同一旺旺号同一发布人只能进一次（不能重复进店）</li>
+				<li>3.按当时的需求可以选择PC或者无线端任务做（左边PC，右边无线端）</li>
+				<li>4.搜索关键词（看清楚入口和搜索条件：淘宝或直通车进或天猫搜索）（确认商品，核对店铺名字）</li>
+				<li>5.浏览主宝贝5分钟（看商品的评价以及商品销量与详情）</li>
+				<li>6.浏览第一款副宝贝3分钟（同一店铺其他宝贝）</li>
+				<li>7.浏览第二款副宝贝3分钟（同一店铺其他宝贝）</li>
+				<li>8.需要双收藏（宝贝和店铺）</li>
+				<li>9.假聊（看宝贝属性聊天，不要瞎聊,收藏该宝贝）</li>
+				<li>10.拍下宝贝（看清是否需要备注）</li>
+				<li>11.付款（用余额，或者实名制的网银）</li>
+				<li>12.完成任务后做下一个任务请清理浏览器（流量器请用google或者火狐）</li>
+				<li>13.下单3—4天后查看物流记录，显示签收了，再评价（好评带15字以上全5分）截图上传，佣金自动到账号可以实时提现。</li>
+			</ul>
+			<b>无线端</b>
+			<ul>
+				<li>1.用手机流量操作，不要用WiFi操作.</li>
+				<li>2.其他流程同于pc和操作</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

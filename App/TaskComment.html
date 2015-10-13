@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="viewport" content="width=100%, initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>提交评价</title>
+	<link type="text/css" rel="stylesheet" href="css/css.css" />
+	<script type="text/javascript" src="../jscode/cordova.js"></script>
+	<script type="text/javascript" src="js/webcam.js"></script>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../jscode/JQueryAjax.js"></script>
+	<script src="../jscode/JQueryKola.js" type="text/javascript"></script>
+	<script src="js/js.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript">
+	var p_nowid="00000000-0000-0000-0000-000000000000";
+	
+	function f_upload1(){
+		WebcamApp.doWebcamApp("photo",
+			"/ashx/UploadFileService.ashx", 
+			{}, 
+			function(params){
+				data=eval("("+params+")");
+				if(data.id===200){
+					files=eval("("+data.name+")");
+					f_showpic(files[0]);
+				}else{
+					alert(params);
+				}
+			},
+			function(error){
+				alert(error);
+			}
+		);
+	}
+	
+	function f_upload2(){
+		WebcamApp.doWebcamApp("album", 
+				"/ashx/UploadFileService.ashx",
+				{}, 
+				function(params){
+					data=eval("("+params+")");
+				if(data.id===200){
+						files=eval("("+data.name+")");
+						f_showpic(files[0]);
+				}else{
+					alert(params);
+				}
+			},
+			function(error){
+				alert(error);
+			}
+		);
+	}
+	
+	function f_showpic(imgPath){
+		//alert(imgPath);
+		$(".pj_plus").css({"background-image":'url('+imgPath+')'});
+		$(".pj_plus").attr("src",imgPath);
+	}
+
+	$(document).ready(function(){
+		openxt_WYWY.fnLayerUnload();
+		
+		var gcode=$.getUrlParam('g');
+		var taskname=$.getUrlParam('t');
+		$(".pj_tit").empty();
+		$(".pj_tit").html(taskname);
+		
+		$(".txmx").click(function(){
+			var url = $(".pj_plus").attr("src");
+			if(url=="" || url==undefined){
+				alert("图片未上传，请先上传图片");
+				return;
+			}
+
+			openxt_WYWY.fnLayerLoad();
+			JQueryAjax("/ashx/SetComPic.ashx",
+				"url="+url+"&gcode="+gcode,
+				function(result){
+					openxt_WYWY.fnLayerUnload();
+					
+					if (result.error != null) {
+						alert(result.error);
+						if(result.error=="请先登录") {
+							window.location="UserLogin.html";
+						}
+					}else{
+						alert("提交成功");
+						window.location="TaskDoing.html";
+					}
+				}
+			);
+		});
+	});
+	
+	</script>
+</head>
+<body>
+	<div class="title_top fixed">
+		<a href="#" class="back">返回</a>提交评价</div>
+	<div class="cleartop">
+	</div>
+	<div class="pj_box">
+		<p class="pj_tit">
+			任务名称：实木家具</p>
+		<a href="javascript:f_upload1()" class="pj_plus"></a>
+		<div class="tx_but">
+			<a href="javascript:f_upload2()" class="txhz">上传评价照片</a></div>
+		<div class="tx_but">
+			<a class="txmx">确 定</a></div>
+	</div>
+</body>
+</html>

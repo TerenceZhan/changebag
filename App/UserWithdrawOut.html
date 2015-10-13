@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 ,user-scalable=no">
+	<title>佣金提现</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link type="text/css" rel="stylesheet" href="css/css.css" />
+	<script src="../jscode/cordova.js" type="text/javascript"></script>
+	<script src="../jscode/Openxt.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../jscode/JQueryAjax.js"></script>
+	<script src="../jscode/JQueryKola.js" type="text/javascript"></script>
+	<script src="js/js.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript">
+	var f_showmoney=function(){
+	
+		openxt_WYWY.fnLayerLoad();
+		JQueryAjax("/ashx/GetWithdrawOut.ashx",{},function(res){
+			openxt_WYWY.fnLayerUnload();
+
+			if (res.error != null) {
+				alert(res.error);
+				if(res.error=="请先登录") 
+					window.location="UserLogin.html";
+			}else{
+				var s="";
+				s+='<td style="padding-bottom:10px;">当前金额</td>'+
+					'<td style="padding-bottom:10px;">'+res.data+'</td>';
+				$("#mine").html(s);
+			}
+		});
+	}
+	
+	$(document).ready(function() {
+		openxt_WYWY.fnLayerUnload();
+	
+		$("#mine").empty();
+		
+		$(".txmx").click(function(){
+			var out = $("#out").val();
+			var reg=/^\d{1,}(.\d{0,2})?$/;
+			if(!reg.test(out) ){
+				alert("提现金额格式不正确");
+				return false;
+			}
+			openxt_WYWY.fnLayerLoad();
+			JQueryAjax("/ashx/SetWithdrawOut.ashx","out="+out,function(result){
+				openxt_WYWY.fnLayerUnload();
+
+				if (result.error != null) {
+					alert(result.error);
+					if(result.error=="请先登录") {
+						window.location="UserLogin.html";
+					}
+				}else{
+					alert("申请提现成功");
+					f_showmoney();
+					$("#out").val("");
+				}
+				openxt_WYWY.fnLayerUnload();
+			});
+		});
+		
+		openxt.page.readyData(f_showmoney)
+		//f_showmoney();
+	});
+	</script>
+</head>
+<body>
+	<div class="title_top fixed">
+		<a class="back">返回</a>佣金提现</div>
+	<div class="cleartop"></div>
+	<form action="">
+	<div class="mm_form smm_form">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr id="mine">
+				<td style="padding-bottom: 10px;">
+					当前金额
+				</td>
+				<td style="padding-bottom: 10px;">
+					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					提现金额
+				</td>
+				<td>
+					<input id="out" type="text" placeholder="请输入金额  精确到分" />
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="tx_but">
+		<a class="txmx">申请提现</a></div>
+	</form>
+</body>
+</html>

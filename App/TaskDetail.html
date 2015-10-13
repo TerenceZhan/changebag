@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 ,user-scalable=no">
+	<title>任务信息页</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link type="text/css" rel="stylesheet" href="css/css.css" />
+	<script type="text/javascript" src="../jscode/cordova.js"></script>
+	<script src="../jscode/Openxt.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../jscode/JQueryAjax.js"></script>
+	<script src="js/js.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript">
+	 var p_gcode = "00000000-0000-0000-0000-000000000000";
+	 function f_submit(){
+		var remark = $("#remark").val();
+		
+		openxt_WYWY.fnLayerLoad();
+		JQueryAjax("/ashx/SubmitOrder.ashx",
+			"gcode="+escape(p_gcode)+"&remark="+remark,
+			function(result){
+				openxt_WYWY.fnLayerUnload();
+				
+				if(result.error!=null){
+					alert(result.error);
+				}else{
+					alert("提交成功");
+					window.location = "TaskDoing.html";
+				}
+			}
+		);
+	}
+	function f_cancel(){
+		openxt_WYWY.fnLayerLoad();
+		JQueryAjax("/ashx/CancelOrder.ashx",
+			"gcode="+escape(p_gcode),
+			function(result){
+				openxt_WYWY.fnLayerUnload();
+				
+				if(result.error!=null){
+					alert(result.error);
+				}else{
+					alert("取消成功");
+					window.location ="TaskRob.html";
+				}
+			}
+		);
+	}
+	function f_showdata(){
+		JQueryAjax("/ashx/GetOrderInfo.ashx","gcode="+escape(p_gcode),function(data){
+			openxt_WYWY.fnLayerUnload();
+			f_showdata_callback(data);
+		});
+	}
+	
+	function f_showdata_callback(res){
+		if(res.error!=null){
+			alert(res.error);
+			if(res.error=="请先登录") window.location="UserLogin.html";
+		}else{
+			var data = res.data.Detail;
+			var data2 = res.data.Status;
+			var s = "";
+			s+="<tr><td><div style='width:90px'>任务名称</div></td><td>"+data.TaskName+"</td></tr>";
+			s+="<tr><td>任务状态</td><td>"+data.TaskStatus+"</td></tr>";//已结束、可领取、已领取、已完成一个<
+			s+="<tr><td>任务时限</td><td>"+data.TaskLimtTime+"</td></tr>";//2015-06-1809:30至2015-07-0121：00
+			s+="<tr><td>任务类型</td><td>"+data.TaskType+"</td></tr>";
+			s+="<tr><td>任务执行人</td><td>"+data.TaskExecuter+"</td></tr>";
+			s+="<tr><td>任务限制</td><td>"+data.TaskLimt+"</td></tr>";
+			s+="<tr><td>店铺名称</td><td>"+data.ShopName+"</td></tr>";
+			s+="<tr><td>关键词</td><td><span class='key_word'>"+data.TaskKeyWord+"</span></td></tr>";
+			s+="<tr><td>搜索要求</td><td>"+data.TaskSearchCond+"</td></tr>";
+			s+="<tr><td>操作要求</td><td>"+data.TaskOptCond+"</td> </tr>";
+			s+="<tr><td>买家备注</td><td>"+data.TaskMsgCond+"</td></tr>";
+			s+="<tr><td>评价要求</td><td>"+data.TaskRateCond+"</td></tr>";
+			s+="<tr><td>审核备注</td><td>"+data.TaskRemark+"</td></tr>";
+			$("#task_detail").html(s);
+				$("#task_img").html("<img src='"+data.ImgUrl+"' width='100%' class='block'/>");
+			if(data.ImgUrl1!="" && data.ImgUrl1!=undefined && data.ImgUrl1!="#") 
+				$("#task_img1").html("<img src='"+data.ImgUrl1+"' width='100%' class='block'/>");
+			var s2= "";
+			s2+="<tr><td><span style='width:60px;'>任务单价</span></td><td><span class='orange'>"+data.TaskPrice+"元</span></td></tr>";
+			s2+="<tr><td><span style='width:60px;'>任务佣金</span></td><td><span class='orange'>"+data.TaskComm+"元</span></td></tr>";
+			if(data.TaskStatus2 == "提交任务"){
+				s2+="<tr><td colspan='2'><textarea id = 'remark' style='height: 100%; width: 100%; '></textarea></td></tr>";
+				s2+="<tr><td colspan='1'><div class='rw_but'><a href='javascript:f_submit();'>"+data.TaskStatus+"</a></div> </td><td colspan='1'><div class='rw_but'><a href='javascript:f_cancel();'>取消任务</a></div> </td></tr>";
+			}
+			if(data.TaskStatus2 == "提交评价"){
+				s2+="<tr><td colspan='2'><div class='rw_but'><a href='TaskComment.html?g="+p_gcode+"&t="+escape(data.TaskName)+"'>"+data.TaskStatus+"</a></div> </td></tr>";
+			}
+			
+			$("#task_detail2").html(s2);
+		}
+	}
+
+	$(document).ready(function() {
+		var reg = new RegExp("(^|&)" + "g" + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null){
+			p_gcode = unescape(r[2]);
+		}
+		openxt.page.readyData(f_showdata);
+		
+	});
+	</script>
+</head>
+<body>
+	<div class="title_top fixed">
+		<a class="back">返回</a>任务信息页</div>
+	<div class="cleartop"></div>
+	<div class="mm_form message_form">
+		<table id="task_detail" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<!--<tr>
+		<td><div style="width:90px">任务名称</div></td>
+		<td>淘宝网实木家具刷单</td>
+	 </tr>
+	 <tr>
+		<td>任务状态</td>
+		<td>已结束、可领取、已领取、已完成一个</td>
+	 </tr>
+	 <tr>
+		<td>任务时限</td>
+		<td>2015-06-1809:30至2015-07-0121：00</td>
+	 </tr>
+	 <tr>
+		<td>任务类型</td>
+		<td>PC任务</td>
+	 </tr>
+	 <tr>
+		<td>任务执行人</td>
+		<td>我爱白菜</td>
+	 </tr>
+	 <tr>
+		<td>任务限制</td>
+		<td>次任务自接单后1小时内必须完成，超时不计每个旺旺号只能接一次本任务。</td>
+	 </tr>
+	 <tr>
+		<td>店铺名称</td>
+		<td>银泰上好佳</td>
+	 </tr>
+	 <tr>
+		<td>关键词</td>
+		<td><span class="key_word">纯棉五分衬衫</span></td>
+	 </tr>
+	 <tr>
+		<td>搜索要求</td>
+		<td>天猫、江浙沪地区，按价格倒序，第15-17页按价格倒序，天猫、江浙沪地区，按价格倒序第15-17页</td>
+	 </tr>
+	 <tr>
+		<td>操作要求</td>
+		<td>店内经营的宝贝种类越多，来光顾的客人就会越多，淘宝开店录入宝贝信息是一项非常累的工作，特别是宝贝多的情况下。</td>
+	 </tr>
+	 <tr>
+		<td>买家备注</td>
+		<td>亲是个不错的买家，收到商品若有任何问题请您立即与小店的售后工作人员联络。</td>
+	 </tr>
+	 <tr>
+		<td>评价要求</td>
+		<td>20字以上</td>
+	 </tr>
+	 <tr>
+		<td>审核备注</td>
+		<td>-</td>
+	 </tr>-->
+		</table>
+	</div>
+	<div class="rw_img" id="task_img">
+		<!--<img src="images/img.jpg" width="100%" class="block"/>-->
+	</div>
+	<div class="rw_img" id="task_img1">
+		<!--<img src="images/img.jpg" width="100%" class="block"/>-->
+	</div>
+	<div class="mm_form">
+		<table id="task_detail2" width="100%" border="0" cellpadding="0" cellspacing="0">
+			<!--<tr>
+		<td><span style="width:60px;">任务单价</span></td>
+		<td><span class="orange">1000.00元</span></td>
+	 </tr>
+	 <tr>
+		<td><span style="width:60px;">任务佣金</span></td>
+		<td><span class="orange">1000.00元</span></td>
+	 </tr>
+	 <tr>
+		<td colspan="2">
+		<div class="rw_but"><a href="#">提交评价</a></div>
+		</td>
+	 </tr>-->
+		</table>
+	</div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 ,user-scalable=no">
+	<title>已完成任务</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link type="text/css" rel="stylesheet" href="css/css.css" />
+	<script type="text/javascript" src="../jscode/cordova.js"></script>
+	<script src="../jscode/Openxt.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../jscode/JQueryAjax.js"></script>
+	<script type="text/javascript" src="js/js.js"></script>
+	<script type="text/javascript" src="js/wx.js"></script>
+	<script type="text/javascript">
+	function f_showdata(){
+		JQueryAjax("/ashx/GetAllFinishedTask.ashx",null,function(data){
+			openxt_WYWY.fnLayerUnload();
+			f_showdata_callback(data);
+		});
+	}
+
+	function f_showdata_callback(res){
+		if(res.error!=null){
+			alert(res.error);
+			if(res.error=="请先登录") window.location="UserLogin.html";
+		}else{
+			var TelTask = res.data.TelTask;
+			var PcTask = res.data.PcTask;
+			var s = "";
+			for(var i = 0;i<PcTask.length;i++){
+				var data = PcTask[i];
+				s+="<dl>";
+				s+="<dt></dt>";
+				s+="<dd>";
+				s+="<span class='slidedown'></span>";
+				s+="<p><em class='sred'>佣金："+data.TaskComm+"</em>"+data.Name+"</p>";
+				s+="<div class='qrw_form' style='display:none;'>";
+				s+="<table width='100%' border='0' cellpadding='0' cellspacing='0'>";
+				s+="<tr>";
+				s+="<td>任务金额："+data.TaskPrice+"</td>";
+				s+="<td>任务状态<span class='gray'>("+data.TaskStatus+")</span></td>";
+				s+="</tr>";
+				s+="<tr>";
+				s+="<td>开始："+data.StartTime2+"</td>";
+				s+="<td>结束："+data.EndTime2+"</td>";
+				s+="</tr>";
+				s+="</table>";
+				s+="</div>";
+				s+="</dd>";
+				s+="</dl>";
+			}
+			
+			$("#pc_list").html(s);
+			var s2 = ""
+			for(var i = 0;i<TelTask.length;i++){
+				var data2 = TelTask[i];
+				s2+="<dl>";
+				s2+="<dt></dt>";
+				s2+="<dd>";
+				s2+="<span class='slidedown'></span>";
+				s2+="<p><em class='sred'>佣金："+data2.TaskComm+"</em>"+data2.Name+"</p>";
+				s2+="<div class='qrw_form' style='display:none;'>";
+				s2+="<table width='100%' border='0' cellpadding='0' cellspacing='0'>";
+				s2+="<tr>";
+				s2+="<td>任务金额："+data2.TaskPrice+"</td>";
+				s2+="<td>任务状态<span class='gray'>("+data2.TaskStatus+")</span></td>";
+				s2+="</tr>";
+				s2+="<tr>";
+				s2+="<td>开始："+data2.StartTime2+"</td>";
+				s2+="<td>结束："+data2.EndTime2+"</td>";
+				s2+="</tr>";
+				s2+="</table>";
+				s2+="</div>";
+				s2+="</dd>";
+				s2+="</dl>";
+			}
+			
+			$("#tel_list").html(s2);
+		}
+		
+		jQuery(".mask_list2 dl").each(function(index){
+			jQuery(this).click(function(){
+				jQuery(this).toggleClass("current");
+				jQuery(this).find(".qrw_form").toggle();
+				jQuery(this).find(".slidedown").toggleClass("current");
+			});
+		});
+	}
+
+	$(document).ready(function() {
+		openxt.page.readyData(f_showdata);
+	});
+	</script>
+</head>
+<body>
+	<div class="title_top fixed">
+		<a class="back">返回</a>已完成任务</div>
+	<div class="cleartop">
+	</div>
+	<div class="qrw_box finish_box">
+		<div class="rw_menu">
+			<span class="rpc current"><a>PC任务</a></span><span class="rsj"><a>手机任务</a></span></div>
+		<div class="rw_main">
+			<div class="rw_con">
+				<div id="pc_list" class="mask_list mask_list2">
+					<!--<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务三：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="gray">(已关闭)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务四：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务三：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务四：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务五：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>-->
+				</div>
+			</div>
+			<div class="rw_con" style="display: none;">
+				<div id="tel_list" class="mask_list mask_list2">
+					<!--<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务三：具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="gray">(已关闭)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务四：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务三：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务四：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>
+				<dl>
+				<dt></dt>
+				<dd>
+					<span class="slidedown"></span>
+					 <p><em class="sred">佣金：500.00</em>任务五：手机任淘宝网实木家具店冲冠刷单说明信息</p>
+					 <div class="qrw_form" style="display:none;">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							 <td>任务金额：1000.00</td>
+							 <td>任务状态<span class="green">(进行中)</span></td>
+						</tr>
+						<tr>
+							 <td>开始：2015/05/08</td>
+							 <td>结束：2015/06/08</td>
+						</tr>
+						</table>
+					 </div>
+				</dd>
+				</dl>-->
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
